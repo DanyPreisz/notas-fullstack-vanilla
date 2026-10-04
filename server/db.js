@@ -1,16 +1,16 @@
 import { MongoClient, ObjectId } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
-if (!uri) {
-  console.error("Falta MONGODB_URI");
-  process.exit(1);
-}
-
-const client = new MongoClient(uri);
+const uri = process.env.MONGODB_URI || "";
 const dbName = process.env.MONGODB_DB || "notas";
 let db;
 
+export function isReady() {
+  return Boolean(db);
+}
+
 export async function connect() {
+  if (!uri) throw new Error("Falta MONGODB_URI");
+  const client = new MongoClient(uri, { serverSelectionTimeoutMS: 10000 });
   await client.connect();
   db = client.db(dbName);
   await db.collection("users").createIndex({ username: 1 }, { unique: true });
