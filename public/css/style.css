@@ -1,0 +1,58 @@
+:root {
+  --ink: #1c1915;
+  --muted: #6f675c;
+  --paper: #f6f1e7;
+  --card: #fffaf2;
+  --line: #e4d9c8;
+  --accent: #2f6f4e;
+  --accent-2: #e7f2eb;
+  --danger: #9b3d32;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: radial-gradient(circle at top left, #fff, var(--paper) 42%);
+  font: 16px/1.45 Georgia, "Iowan Old Style", serif;
+}
+button, input, textarea { font: inherit; }
+.hidden { display: none !important; }
+.shell { max-width: 1120px; margin: 0 auto; padding: 28px 18px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
+.auth { max-width: 420px; margin: 8vh auto; padding: 28px; }
+.eyebrow { margin: 0; letter-spacing: .14em; text-transform: uppercase; font: 12px/1.2 system-ui, sans-serif; color: var(--accent); }
+h1 { margin: 6px 0 16px; font-size: 42px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.tab, .ghost, .primary, .danger, .cat {
+  border: 0; border-radius: 999px; padding: 8px 14px; cursor: pointer;
+}
+.tab { background: transparent; color: var(--muted); }
+.tab.active { background: var(--ink); color: white; }
+label { display: grid; gap: 6px; margin-bottom: 12px; font: 14px system-ui, sans-serif; color: var(--muted); }
+input, textarea {
+  width: 100%; border: 1px solid var(--line); background: white; border-radius: 12px; padding: 10px 12px; color: var(--ink);
+}
+textarea { resize: vertical; min-height: 240px; }
+.primary { background: var(--accent); color: white; }
+.danger { background: #f8e8e5; color: var(--danger); }
+.ghost { background: transparent; color: var(--muted); }
+.error { color: var(--danger); font: 14px system-ui, sans-serif; }
+.app { display: grid; grid-template-columns: 240px 280px 1fr; gap: 16px; min-height: 78vh; }
+.side, .list-pane, .editor { padding: 16px; }
+.categories { display: grid; gap: 6px; margin: 14px 0; }
+.cat { text-align: left; background: transparent; color: var(--ink); }
+.cat.active { background: var(--accent-2); color: var(--accent); }
+#notes { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.note {
+  width: 100%; text-align: left; border: 1px solid var(--line); background: var(--card); border-radius: 14px; padding: 12px; cursor: pointer;
+}
+.note.active { outline: 2px solid var(--accent); }
+.note small, .meta { color: var(--muted); font: 12px system-ui, sans-serif; }
+.row { display: flex; gap: 8px; }
+.checkline { display: flex; align-items: center; gap: 8px; }
+.checkline input { width: auto; }
+@media (max-width: 860px) {
+  .app { grid-template-columns: 1fr; }
+  textarea { min-height: 180px; }
+}
