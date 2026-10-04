@@ -1,15 +1,14 @@
 import { URL } from "node:url";
-import { connect, users, notes, toId, mapNote } from "./db.js";
+import { connect, isReady, users, notes, toId, mapNote } from "./db.js";
 import { createApp, readJson, sendEmpty, sendJson, serveStatic } from "./http.js";
 import { getUserFromRequest, hashPassword, signToken, verifyPassword } from "./middleware/auth.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT || 8080);
 const HOST = process.env.HOST || "0.0.0.0";
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 
 function usernameQuery(username) {
-  const escaped = username.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`^${escaped}$`, "i");
+  return new RegExp("^" + username.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$", "i");
 }
 
 function requireUser(req, res) {
@@ -30,6 +29,9 @@ const server = createApp(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
   const { pathname, searchParams } = url;
   const method = req.method || "GET";
+
+  if (pathname === "/health") return sendJson(res, 200, { ok: true, db: isReady() });
+  if (pathname.startsWith("/api/") && !isReady()) return sendJson(res, 503, { error: "Base no lista" });
 
   if (!pathname.startsWith("/api/")) {
     serveStatic(req, res);
@@ -146,7 +148,19 @@ const server = createApp(async (req, res) => {
   sendJson(res, 404, { error: "Ruta no encontrada" });
 });
 
-await connect();
-server.listen(Number(PORT), HOST, () => {
+server.listen(PORT, HOST, () => {
   console.log(`Notas en http://${HOST}:${PORT}`);
 });
+
+async function bootDb() {
+  for (;;) {
+    try {
+      await connect();
+      return;
+    } catch (err) {
+      console.error("Mongo no disponible:", err.message);
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+  }
+}
+bootDb();
